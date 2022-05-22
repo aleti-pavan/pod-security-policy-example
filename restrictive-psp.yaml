@@ -1,0 +1,42 @@
+---
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: restricted
+spec:
+  # privileged: required to present escalations to root
+  privileged: false
+  # hostPID: controls whether the pod may use the node's process ID Namespace.
+  hostPID: false
+  # hostIPC: Any container running in the host IPC's namespaces can interact 
+  # with processes running outside the container
+  hostIPC: false
+  #hostNetwork: Controls whether the pod may use the node network namespace
+  hostNetwork: false
+  allowPrivilegeEscalation: false
+  fsGroup:
+    rule: 'MustRunAs'
+    ranges:
+    #Forbin adding the root group
+    - max: 65535
+      min: 1
+  requiredDropCapabilities:
+  - ALL
+  runAsUser:
+    rule: MustRunAsNonRoot
+  seLinux:
+    rule: RunAsAny
+  supplementalGroups:
+    rule: 'MustRunAs'
+    ranges:
+    #Forbin adding the root group
+    - max: 65535
+      min: 1
+  volumes:
+  - 'emptyDir'
+  - 'secret'
+  - 'downwardAPI'
+  - 'configMap'
+  - 'persistentVolumeClaim'
+  - 'projected'
+  
